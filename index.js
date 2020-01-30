@@ -2,17 +2,12 @@ const css = require('css');
 const fs = require('fs');
 
 function read(filename) {
-  fs.readFileSync(filename, 'utf8', (err, data) => {
-    consolelog('data', data);
-    const ast = css.parse(data, { silent: false });
-    console.log('meh');
-    return ast;
-  });
+  return fs.readFileSync(filename, 'utf8').toString();
 }
 
-function processFile(ast) {
+function processFile(stylesheet) {
+  const ast = css.parse(stylesheet, { silent: false });
   const sortedTree = sortRules(ast);
-  const str = css.stringify(txt, { silent: false });
   return ast;
 }
 
@@ -38,15 +33,18 @@ function sortAlphabetically(rule) {
   return declarations;
 }
 
-function start() {
-  read('style.css');
-  const newFile = processFile(txt);
-  const str = css.stringify(txt, { silent: false });
-
-  fs.writeFile('style-updated.css', str, err => {
+function write(stylesheetStr) {
+  fs.writeFileSync('updated.css', stylesheetStr, err => {
     if (err) throw err;
     console.log('Saved', str);
   });
+}
+
+function start() {
+  const stylesheet = read('style.css');
+  const newStylesheet = processFile(stylesheet);
+  const str = css.stringify(newStylesheet, { silent: false });
+  write(str);
 }
 
 start();
